@@ -274,6 +274,11 @@
       // ===== RANGE EDITOR (CLICK & DRAG) =====
       var ranks = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
       var suits = ["♠", "♥", "♦", "♣"];
+      
+      // Function to style card color based on suit
+      function getCardColor(suit) {
+        return (suit === "♥" || suit === "♦") ? "red" : "black";
+      }
       var rangeMapping = {}; // e.g. "AKs" -> "fold"/"call"/"raise"
       var currentAction = "fold"; // default
       var isDrawing = false;      // are we holding mouse down?
@@ -388,9 +393,21 @@
       function displayHand(hand) {
         var c1 = hand[0].rank + hand[0].suit;
         var c2 = hand[1].rank + hand[1].suit;
-        document.getElementById("btnCard1").innerText = c1;
-        document.getElementById("btnCard2").innerText = c2;
-        document.getElementById("handDisplay").innerText = "Your hand: " + c1 + " " + c2;
+        
+        // Set text and color for both cards on the table
+        var btnCard1 = document.getElementById("btnCard1");
+        var btnCard2 = document.getElementById("btnCard2");
+        
+        btnCard1.innerText = c1;
+        btnCard1.style.color = getCardColor(hand[0].suit);
+        
+        btnCard2.innerText = c2;
+        btnCard2.style.color = getCardColor(hand[1].suit);
+        
+        // Update hand display text with colored spans
+        document.getElementById("handDisplay").innerHTML = 
+          "Your hand: <span style='color:" + getCardColor(hand[0].suit) + "'>" + c1 + "</span> " + 
+          "<span style='color:" + getCardColor(hand[1].suit) + "'>" + c2 + "</span>";
       }
 
       function handToNotation(hand) {
