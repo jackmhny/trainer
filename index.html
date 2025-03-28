@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Poker Range Trainer (Correct 6-Max Order)</title>
+  <title>Poker Range Trainer (6-Max Clockwise from BTN)</title>
   <style>
     /* ===== General Page Styles ===== */
     body {
@@ -91,7 +91,7 @@
       margin-top: 10px;
     }
 
-    /* ===== Poker Table Graphic (Correct 6-max order, clockwise) ===== */
+    /* ===== Poker Table Graphic (6-max clockwise from BTN) ===== */
     .poker-table {
       position: relative;
       width: 400px;
@@ -144,34 +144,48 @@
     }
 
     /*
-      6-Max order (clockwise):
-      SB (bottom-left) → BB (bottom-right) → LJ (middle-right) → HJ (top-right) → CO (top-left) → BTN (bottom-center)
+      6-Max order (clockwise from BTN at 6:00):
+      BTN (6:00) → SB (4:00) → BB (2:00) → LJ (12:00) → HJ (10:00) → CO (8:00)
     */
-    .player.sb {
-      bottom: 40px;
-      left: 10%;
+    .player {
+      position: absolute;
+      transform: translate(-40px, -40px); /* Center the player divs */
     }
-    .player.bb {
-      bottom: 40px;
-      right: 10%;
-    }
-    .player.lj {
-      top: 50%;
-      right: 5%;
-      transform: translateY(-50%);
-    }
-    .player.hj {
-      top: 20px;
-      right: 25%;
-    }
-    .player.co {
-      top: 20px;
-      left: 25%;
-    }
+    
+    /* BTN at 6:00 position */
     .player.btn {
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
+      left: 200px;
+      top: 380px;
+    }
+    
+    /* SB at 4:00 position - clockwise after BTN */
+    .player.sb {
+      left: 27px;
+      top: 300px;
+    }
+    
+    /* BB at 2:00 position - clockwise after SB */
+    .player.bb {
+      left: 27px;
+      top: 100px;
+    }
+    
+    /* LJ at 12:00 position - clockwise after BB */
+    .player.lj {
+      left: 200px;
+      top: 20px;
+    }
+    
+    /* HJ at 10:00 position - clockwise after LJ */
+    .player.hj {
+      left: 373px;
+      top: 100px;
+    }
+    
+    /* CO at 8:00 position - clockwise after HJ */
+    .player.co {
+      left: 373px;
+      top: 300px;
     }
   </style>
 </head>
@@ -208,12 +222,20 @@
   <!-- Play Tab -->
   <div id="play" class="tab-content">
     <h2>Play Mode</h2>
-    <p><strong>Scenario:</strong> It's folded around to you on the Button. LJ, HJ, and CO have folded. SB and BB are still in with face-down cards.</p>
+    <p><strong>Scenario:</strong> You're on the Button. CO, HJ, and LJ have folded. SB and BB are still to act with face-down cards.</p>
     <p>Your position: <strong>BTN</strong></p>
 
     <!-- Poker Table Layout -->
     <div class="poker-table">
-      <!-- SB (face-down) -->
+      <!-- BTN (You) face-up at 6:00 -->
+      <div class="player btn">
+        <div class="name">BTN (You)</div>
+        <div class="cards">
+          <div class="card" id="btnCard1"></div>
+          <div class="card" id="btnCard2"></div>
+        </div>
+      </div>
+      <!-- SB at 4:00 - clockwise after BTN -->
       <div class="player sb">
         <div class="name">SB</div>
         <div class="cards">
@@ -221,7 +243,7 @@
           <div class="card face-down"></div>
         </div>
       </div>
-      <!-- BB (face-down) -->
+      <!-- BB at 2:00 - clockwise after SB -->
       <div class="player bb">
         <div class="name">BB</div>
         <div class="cards">
@@ -229,28 +251,20 @@
           <div class="card face-down"></div>
         </div>
       </div>
-      <!-- LJ folded -->
+      <!-- LJ at 12:00 - clockwise after BB -->
       <div class="player lj">
         <div class="name">LJ</div>
         <div class="cards folded">Folded</div>
       </div>
-      <!-- HJ folded -->
+      <!-- HJ at 10:00 - clockwise after LJ -->
       <div class="player hj">
         <div class="name">HJ</div>
         <div class="cards folded">Folded</div>
       </div>
-      <!-- CO folded -->
+      <!-- CO at 8:00 - clockwise after HJ -->
       <div class="player co">
         <div class="name">CO</div>
         <div class="cards folded">Folded</div>
-      </div>
-      <!-- BTN (You) face-up -->
-      <div class="player btn">
-        <div class="name">BTN (You)</div>
-        <div class="cards">
-          <div class="card" id="btnCard1"></div>
-          <div class="card" id="btnCard2"></div>
-        </div>
       </div>
     </div>
 
@@ -473,7 +487,7 @@
         handleAnswer("raise");
       });
 
-      console.log("Initialization complete. Seats now go SB -> BB -> LJ -> HJ -> CO -> BTN in clockwise order.");
+      console.log("Initialization complete. Seats now go BTN -> SB -> BB -> LJ -> HJ -> CO in clockwise order.");
     });
   </script>
 </body>
