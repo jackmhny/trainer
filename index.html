@@ -468,28 +468,24 @@
         
         // Player positions in clockwise order starting with BTN at 6:00
         const positions = [
-          { player: 'btn', angle: 90 + 180 },  // BTN at 6:00 (270°)
-          { player: 'sb', angle: 150 + 180 },  // SB at 4:00 (330°)
-          { player: 'bb', angle: 210 + 180 },  // BB at 2:00 (30°) - this wraps to 390° which is equivalent to 30°
-          { player: 'lj', angle: 270 + 180 },  // LJ at 12:00 (90°) - this wraps to 450° which is equivalent to 90°
-          { player: 'hj', angle: 330 + 180 },  // HJ at 10:00 (150°) - this wraps to 510° which is equivalent to 150°
-          { player: 'co', angle: 30 + 180 }    // CO at 8:00 (210°)
+          { player: 'btn', angle: Math.PI / 2 * 3 },  // BTN at 6:00
+          { player: 'sb', angle: Math.PI / 2 * 3 + Math.PI / 3 },  // SB at 4:00
+          { player: 'bb', angle: Math.PI / 2 * 3 + Math.PI / 3 * 2 },  // BB at 2:00
+          { player: 'lj', angle: Math.PI / 2 * 3 + Math.PI / 3 * 3 },  // LJ at 12:00
+          { player: 'hj', angle: Math.PI / 2 * 3 + Math.PI / 3 * 4 },  // HJ at 10:00
+          { player: 'co', angle: Math.PI / 2 * 3 + Math.PI / 3 * 5 }    // CO at 8:00
         ];
         
         // Calculate and apply positions
         positions.forEach(pos => {
-          // Convert angle to radians and adjust for correct orientation
-          const angleRad = pos.angle * Math.PI / 180;
+          // Using radians directly
+          const angle = pos.angle;
           
-          // In the standard coordinate system:
-          // - 0° is to the right (3:00)
-          // - 90° is up (12:00)
-          // - 180° is to the left (9:00)
-          // - 270° is down (6:00)
-          const x = centerX + radius * Math.cos(angleRad);
-          const y = centerY + radius * Math.sin(angleRad);
+          // Calculate the position using the angle in radians
+          const x = centerX + radius * Math.cos(angle);
+          const y = centerY + radius * Math.sin(angle);
           
-          console.log(`Player ${pos.player} at angle ${pos.angle}°: (${x.toFixed(0)}, ${y.toFixed(0)})`);
+          console.log(`Player ${pos.player} positioned at (${x.toFixed(0)}, ${y.toFixed(0)})`);
           
           const player = document.querySelector('.player.' + pos.player);
           if (player) {
