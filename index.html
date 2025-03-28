@@ -2,45 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Poker Range Trainer (6-Max Clockwise from BTN)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ===== General Page Styles ===== */
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      font-family: 'Inter', system-ui, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      color: #333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
     }
     h1, h2 {
       text-align: center;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    h1 {
+      margin-top: 30px;
+      margin-bottom: 20px;
+      font-size: 2.2rem;
+    }
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
     }
     p {
       text-align: center;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      color: #555;
     }
     .button {
       margin: 5px;
-      padding: 10px 20px;
+      padding: 12px 24px;
       font-size: 16px;
+      font-weight: 500;
       cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      transition: none;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     /* ===== Tab Navigation ===== */
     #tabs {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
     }
     .tab {
       display: inline-block;
-      padding: 10px 20px;
-      background-color: #eee;
+      padding: 12px 24px;
+      background-color: #f5f5f5;
       margin-right: 10px;
       cursor: pointer;
-      border-radius: 5px;
+      border-radius: 5px 5px 0 0;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      position: relative;
+      top: 1px;
+      transition: none;
+    }
+    .tab:hover {
+      background-color: #e9ecef;
     }
     .tab.active {
-      background-color: #ddd;
-      font-weight: bold;
+      background-color: #fff;
+      font-weight: 600;
+      border-bottom: 2px solid #27ae60;
+      color: #27ae60;
     }
     .tab-content {
       display: none; /* Hidden by default */
+      background-color: #fff;
+      border-radius: 0 5px 5px 5px;
+      padding: 25px;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.05);
     }
     .tab-content.active {
       display: block; /* Shown when active */
@@ -48,47 +93,111 @@
 
     /* ===== Range Editor (Grid) Styles ===== */
     .grid-container {
-      margin: 0 auto 20px auto;
-      border: 2px solid #000;
+      margin: 0 auto 30px auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
       overflow-x: auto;
-      max-width: 90%;
+      max-width: 100%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      background: white;
     }
     table {
       border-collapse: collapse;
       margin: 0 auto;
-      min-width: 600px; /* Ensures table is wide enough */
+      width: 100%;
+      user-select: none;
     }
     th, td {
-      border: 1px solid #ccc;
-      padding: 5px;
+      border: 1px solid #e0e0e0;
+      padding: 4px 2px;
       text-align: center;
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
+      transition: none;
+      font-size: 12px;
+    }
+    
+    td:hover {
+      background-color: rgba(0,0,0,0.05);
+      transition: none;
+    }
+    
+    /* Mobile-friendly adjustments */
+    @media (max-width: 768px) {
+      th, td {
+        width: 24px;
+        height: 24px;
+        padding: 2px 1px;
+        font-size: 10px;
+      }
+    }
+    td:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      z-index: 1;
+      position: relative;
     }
     th {
-      background-color: #eee;
+      background-color: #f5f7fa;
+      font-weight: 600;
+      color: #34495e;
     }
     /* Color states for fold/call/raise */
     .state-fold {
       background-color: white;
+      color: #7f8c8d;
     }
     .state-call {
-      background-color: #FFFF99; /* Light yellow */
+      background-color: #ffeaa7; /* Light yellow */
+      color: #d35400;
+      font-weight: 500;
     }
     .state-raise {
-      background-color: #99FF99; /* Light green */
+      background-color: #55efc4; /* Light green */
+      color: #006266;
+      font-weight: 500;
+    }
+    
+    /* Prevent text selection during drag operations */
+    table {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
     }
 
     /* ===== Play Mode Styles ===== */
     .hand-display {
-      font-size: 24px;
-      margin: 20px 0;
+      font-size: 32px;
+      margin: 30px 0;
       text-align: center;
+      padding: 15px;
+      background-color: rgba(255,255,255,0.7);
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      font-weight: 500;
+      letter-spacing: 2px;
     }
-    #feedback, #scoreDisplay {
+    #feedback {
       text-align: center;
-      font-size: 18px;
-      margin-top: 10px;
+      font-size: 20px;
+      margin: 20px auto;
+      padding: 15px;
+      border-radius: 5px;
+      max-width: 500px;
+      font-weight: 500;
+      transition: none;
+    }
+    #feedback:empty {
+      padding: 0;
+      margin: 10px;
+    }
+    #scoreDisplay {
+      text-align: center;
+      font-size: 24px;
+      margin-top: 20px;
+      font-weight: 600;
+      color: #2980b9;
     }
 
     /* ===== Poker Table Graphic (6-max clockwise from BTN) ===== */
@@ -100,6 +209,20 @@
       border: 2px solid #006400;
       border-radius: 50%;
       background: radial-gradient(circle, #0c8 0%, #073 100%);
+      max-width: 100%;
+    }
+    
+    /* Mobile-friendly adjustments for poker table */
+    @media (max-width: 768px) {
+      .poker-table {
+        width: 300px;
+        height: 300px;
+        transform: scale(0.8);
+        margin: 60px auto 80px auto;
+      }
+      .player {
+        transform: scale(0.7) translate(-50px, -50px);
+      }
     }
     .player {
       position: absolute;
@@ -107,11 +230,17 @@
       height: 100px;
       border-radius: 50%;
       background-color: #fff;
-      border: 2px solid #000;
+      border: 3px solid #333;
       text-align: center;
       line-height: 100px;
       font-size: 14px;
       overflow: hidden; /* so "cards" can fit inside neatly if needed */
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      transition: none;
+    }
+    .player.btn {
+      border-color: #f1c40f;
+      box-shadow: 0 0 20px rgba(241, 196, 15, 0.4);
     }
     .name {
       margin-top: 5px;
@@ -123,15 +252,17 @@
     }
     .card {
       display: inline-block;
-      width: 24px;
-      height: 32px;
-      border: 1px solid #000;
-      border-radius: 3px;
-      margin: 0 1px;
+      width: 28px;
+      height: 38px;
+      border: 1px solid #444;
+      border-radius: 4px;
+      margin: 0 2px;
       text-align: center;
-      line-height: 32px;
-      font-size: 14px;
+      line-height: 38px;
+      font-size: 16px;
       background-color: white;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      font-weight: 600;
       color: #000;
     }
     .card.face-down {
@@ -144,8 +275,8 @@
     }
 
     /*
-      6-Max order (clockwise from BTN at 6:00):
-      BTN (6:00) → SB (4:00) → BB (2:00) → LJ (12:00) → HJ (10:00) → CO (8:00)
+      6-Max order (clockwise from BTN at 6:00/bottom):
+      BTN (6:00/bottom) → SB (8:00) → BB (10:00) → LJ (12:00/top) → HJ (2:00) → CO (4:00)
     */
     .player {
       position: absolute;
@@ -156,6 +287,7 @@
   </style>
 </head>
 <body>
+  <div class="container">
   <h1>Poker Range Trainer (BTN RFI Scenario)</h1>
 
   <!-- Tab Navigation -->
@@ -193,7 +325,7 @@
 
     <!-- Poker Table Layout -->
     <div class="poker-table">
-      <!-- BTN (You) face-up at 6:00 -->
+      <!-- BTN (You) face-up at 6:00 (bottom) -->
       <div class="player btn">
         <div class="name">BTN (You)</div>
         <div class="cards">
@@ -201,7 +333,7 @@
           <div class="card" id="btnCard2"></div>
         </div>
       </div>
-      <!-- SB at 4:00 - clockwise after BTN -->
+      <!-- SB at 8:00 - clockwise after BTN -->
       <div class="player sb">
         <div class="name">SB</div>
         <div class="cards">
@@ -209,7 +341,7 @@
           <div class="card face-down"></div>
         </div>
       </div>
-      <!-- BB at 2:00 - clockwise after SB -->
+      <!-- BB at 10:00 - clockwise after SB -->
       <div class="player bb">
         <div class="name">BB</div>
         <div class="cards">
@@ -217,17 +349,17 @@
           <div class="card face-down"></div>
         </div>
       </div>
-      <!-- LJ at 12:00 - clockwise after BB -->
+      <!-- LJ at 12:00 (top) - clockwise after BB -->
       <div class="player lj">
         <div class="name">LJ</div>
         <div class="cards folded">Folded</div>
       </div>
-      <!-- HJ at 10:00 - clockwise after LJ -->
+      <!-- HJ at 2:00 - clockwise after LJ -->
       <div class="player hj">
         <div class="name">HJ</div>
         <div class="cards folded">Folded</div>
       </div>
-      <!-- CO at 8:00 - clockwise after HJ -->
+      <!-- CO at 4:00 - clockwise after HJ -->
       <div class="player co">
         <div class="name">CO</div>
         <div class="cards folded">Folded</div>
@@ -237,14 +369,14 @@
     <!-- Standard quiz UI below -->
     <div class="hand-display" id="handDisplay">Click "Next Hand" to get your cards!</div>
     <div style="text-align: center;">
-      <button id="foldButton" class="button">Fold</button>
-      <button id="callButton" class="button">Call</button>
-      <button id="raiseButton" class="button">Raise</button>
+      <button id="foldButton" class="button" style="background-color: #e74c3c; color: white;">Fold</button>
+      <button id="callButton" class="button" style="background-color: #f39c12; color: white;">Call</button>
+      <button id="raiseButton" class="button" style="background-color: #27ae60; color: white;">Raise</button>
     </div>
     <div id="feedback"></div>
     <div style="text-align: center;">
-      <button id="nextHand" class="button">Next Hand</button>
-      <button id="resetScore" class="button">Reset Score</button>
+      <button id="nextHand" class="button" style="background-color: #3498db; color: white;">Next Hand</button>
+      <button id="resetScore" class="button" style="background-color: #95a5a6; color: white;">Reset Score</button>
     </div>
     <div id="scoreDisplay">Score: 0</div>
   </div>
@@ -315,6 +447,10 @@
         for (var col = 0; col < ranks.length; col++) {
           var th = document.createElement("th");
           th.innerText = ranks[col];
+          // Hide some rank headers on mobile
+          if (window.innerWidth <= 768 && (ranks[col] === "4" || ranks[col] === "3" || ranks[col] === "2")) {
+            th.style.display = "none";
+          }
           headerRow.appendChild(th);
         }
         table.appendChild(headerRow);
@@ -327,6 +463,12 @@
           row.appendChild(rowHeader);
 
           for (var colIndex = 0; colIndex < ranks.length; colIndex++) {
+            // Skip lower cards on mobile to simplify the grid
+            if (window.innerWidth <= 768 && (ranks[colIndex] === "4" || ranks[colIndex] === "3" || ranks[colIndex] === "2" ||
+                ranks[rowIndex] === "4" || ranks[rowIndex] === "3" || ranks[rowIndex] === "2")) {
+              continue;
+            }
+              
             var cell = document.createElement("td");
             var notation;
             if (rowIndex === colIndex) {
@@ -336,7 +478,12 @@
             } else {
               notation = ranks[colIndex] + ranks[rowIndex] + "o"; // offsuit
             }
-            cell.innerText = notation;
+            // Simplify notation display on mobile
+            if (window.innerWidth <= 768) {
+              cell.innerText = notation.substring(0, 2);
+            } else {
+              cell.innerText = notation;
+            }
             cell.dataset.notation = notation; // store the notation in a data-attribute
             cell.classList.add("state-fold"); // default
 
@@ -470,7 +617,7 @@
         handleAnswer("raise");
       });
 
-      console.log("Initialization complete. Seats now go BTN -> SB -> BB -> LJ -> HJ -> CO in clockwise order.");
+      console.log("Initialization complete. Seats now go BTN (bottom) -> SB -> BB -> LJ (top) -> HJ -> CO in clockwise order.");
       
       // Function to position players in a perfect regular hexagon
       function positionPlayersInHexagon() {
@@ -480,34 +627,24 @@
         const centerX = tableWidth / 2;
         const centerY = tableHeight / 2;
         
-        // Radius (distance from center to vertices)
-        const radius = 225;
-        
-        // Player positions in clockwise order starting with BTN at 6:00
+        // Hardcoded positions for each player
         const positions = [
-          { player: 'btn', angle: Math.PI / 2 * 3 },  // BTN at 6:00
-          { player: 'sb', angle: Math.PI / 2 * 3 + Math.PI / 3 },  // SB at 4:00
-          { player: 'bb', angle: Math.PI / 2 * 3 + Math.PI / 3 * 2 },  // BB at 2:00
-          { player: 'lj', angle: Math.PI / 2 * 3 + Math.PI / 3 * 3 },  // LJ at 12:00
-          { player: 'hj', angle: Math.PI / 2 * 3 + Math.PI / 3 * 4 },  // HJ at 10:00
-          { player: 'co', angle: Math.PI / 2 * 3 + Math.PI / 3 * 5 }    // CO at 8:00
+          { player: 'btn', x: centerX, y: centerY + 225 },  // BTN at bottom (6 o'clock)
+          { player: 'sb', x: centerX - 195, y: centerY + 112.5 },  // SB at 8 o'clock
+          { player: 'bb', x: centerX - 195, y: centerY - 112.5 },  // BB at 10 o'clock
+          { player: 'lj', x: centerX, y: centerY - 225 },  // LJ at top (12 o'clock)
+          { player: 'hj', x: centerX + 195, y: centerY - 112.5 },  // HJ at 2 o'clock
+          { player: 'co', x: centerX + 195, y: centerY + 112.5 }   // CO at 4 o'clock
         ];
         
-        // Calculate and apply positions
+        // Apply positions
         positions.forEach(pos => {
-          // Using radians directly
-          const angle = pos.angle;
-          
-          // Calculate the position using the angle in radians
-          const x = centerX + radius * Math.cos(angle);
-          const y = centerY + radius * Math.sin(angle);
-          
-          console.log(`Player ${pos.player} positioned at (${x.toFixed(0)}, ${y.toFixed(0)})`);
+          console.log(`Player ${pos.player} positioned at (${pos.x.toFixed(0)}, ${pos.y.toFixed(0)})`);
           
           const player = document.querySelector('.player.' + pos.player);
           if (player) {
-            player.style.left = x + 'px';
-            player.style.top = y + 'px';
+            player.style.left = pos.x + 'px';
+            player.style.top = pos.y + 'px';
           }
         });
         
@@ -518,5 +655,6 @@
       positionPlayersInHexagon();
     });
   </script>
+  </div>
 </body>
 </html>
